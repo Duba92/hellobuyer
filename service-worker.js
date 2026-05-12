@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hellobuyer-v4';
+const CACHE_NAME = 'hellobuyer-v5';
 const urlsToCache = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', event => {
