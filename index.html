@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1e4a76">
+  <meta name="description" content="HelloBuyer Supermarket ERP - Complete Management System">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>HelloBuyer ERP - Supermarket System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f0f4f8;
+      color: #1a2a3a;
+    }
+
+    /* App Container */
+    .app-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    /* Login Screen */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1e4a76 0%, #0f2b40 100%);
+      padding: 1rem;
+    }
+
+    .login-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 350px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo-container h1 {
+      color: #1e4a76;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .logo-container p {
+      color: #6b7a8a;
+      font-size: 0.9rem;
+    }
+
+    /* Header */
+    .header {
+      background: #1e4a76;
+      color: white;
+      padding: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .logo small {
+      font-size: 0.7rem;
+      font-weight: normal;
+      margin-left: 0.3rem;
+    }
+
+    .user-info {
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.2);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: #2c6288;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:active {
+      transform: scale(0.95);
+    }
+
+    .nav-btn.active {
+      background: #ffb347;
+      color: #1e4a76;
+    }
+
+    .logout-btn {
+      background: #dc2626;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 1rem;
+      padding-bottom: 2rem;
+    }
+
+    /* Cards */
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .card h3 {
+      color: #1e4a76;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+      padding: 1rem;
+      border-radius: 16px;
+      border-left: 4px solid #1e4a76;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #1e4a76;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #6b7a8a;
+      margin-top: 0.3rem;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: #1e4a76;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #1e4a76;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-small {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    /* Forms */
+    input, select, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #1e4a76;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-box input {
+      flex: 1;
+      margin: 0;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.8rem 0.5rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      color: #1e4a76;
+      font-weight: 600;
+      background: #f8fafc;
+    }
+
+    /* Product Items */
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      background: #f8fafc;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+
+    .product-item:active {
+      transform: scale(0.98);
+    }
+
+    /* Cart */
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .cart-total {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1e4a76;
+      margin: 1rem 0;
+    }
+
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .gap-1 { gap: 0.5rem; }
+    .mt-1 { margin-top: 0.5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mb-1 { margin-bottom: 0.5rem; }
+    .text-center { text-align: center; }
+    .text-success { color: #10b981; }
+    .text-danger { color: #ef4444; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .badge-warning {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: #1e4a76;
+      color: white;
+      text-align: center;
+      padding: 0.8rem;
+      border-radius: 50px;
+      z-index: 1000;
+      font-size: 0.9rem;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Install Prompt */
+    .install-prompt {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: #1e4a76;
+      color: white;
+      padding: 1rem;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1001;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: slideUp 0.3s ease;
+    }
+
+    .install-prompt button {
+      background: #ffb347;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 40px;
+      color: #1e4a76;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 600px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.75rem;
+      }
+      
+      .card {
+        padding: 1rem;
+      }
+      
+      th, td {
+        padding: 0.5rem 0.3rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* Offline Indicator */
+    .offline-indicator {
+      background: #dc2626;
+      color: white;
+      text-align: center;
+      padding: 0.3rem;
+      font-size: 0.8rem;
+      position: sticky;
+      top: 0;
+      z-index: 101;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator hidden">
+      📡 You are offline - Sales will be saved locally
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+      <div class="login-card">
+        <div class="logo-container">
+          <h1>🛒 HelloBuyer</h1>
+          <p>Supermarket ERP System</p>
+        </div>
+        <input type="email" id="loginEmail" placeholder="Email" autocomplete="email" value="admin@hellobuyer.com">
+        <input type="password" id="loginPassword" placeholder="Password" value="admin123">
+        <button id="loginBtn" class="btn-primary">🔐 Login to Dashboard</button>
+        <div class="demo-hint text-center mt-2" style="font-size: 0.8rem; color: #6b7a8a;">
+          📱 Install this app: Tap Share → Add to Home Screen
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appScreen" class="hidden">
+      <div class="header">
+        <div class="header-top">
+          <div class="logo">
+            🛒 HelloBuyer <small>ERP</small>
+          </div>
+          <div class="user-info" id="userName">Admin</div>
+        </div>
+        <div class="nav-buttons">
+          <button class="nav-btn active" data-page="dashboard">📊 Dashboard</button>
+          <button class="nav-btn" data-page="products">📦 Products</button>
+          <button class="nav-btn" data-page="pos">💰 POS</button>
+          <button class="nav-btn" data-page="reports">📈 Reports</button>
+          <button class="nav-btn logout-btn" id="logoutBtn">🚪 Logout</button>
+        </div>
+      </div>
+      <div id="pageContent" class="main-content">
+        <!-- Dynamic content loads here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Install Prompt -->
+  <div id="installPrompt" class="install-prompt hidden">
+    <span>📱 Install HelloBuyer ERP</span>
+    <button id="installBtn">Install App</button>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    // ==================== HELLOBUYER ERP - FULL WORKING SYSTEM ====================
+    
+    let db = null;
+    let currentUser = null;
+    let deferredPrompt = null;
+    
+    // PWA Installation
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installPrompt').classList.remove('hidden');
+    });
+    
+    document.getElementById('installBtn')?.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          document.getElementById('installPrompt').classList.add('hidden');
+        }
+        deferredPrompt = null;
+      }
+    });
+    
+    // Offline detection
+    window.addEventListener('online', () => {
+      document.getElementById('offlineIndicator').classList.add('hidden');
+      showToast('Back online!');
+    });
+    
+    window.addEventListener('offline', () => {
+      document.getElementById('offlineIndicator').classList.remove('hidden');
+      showToast('Offline mode - Sales saved locally');
+    });
+    
+    function showToast(message, duration = 2000) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), duration);
+    }
+    
+    // Database Initialization
+    function initDB() {
+      return new Promise((resolve) => {
+        const request = indexedDB.open('HelloBuyerDB', 4);
+        
+        request.onerror = () => resolve(null);
+        request.onsuccess = () => {
+          db = request.result;
+          seedInitialData();
+          resolve(db);
+        };
+        
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          
+          if (!db.objectStoreNames.contains('products')) {
+            const store = db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
+            store.createIndex('name', 'name');
+            store.createIndex('barcode', 'barcode');
+          }
+          if (!db.objectStoreNames.contains('sales')) {
+            db.createObjectStore('sales', { keyPath: 'id', autoIncrement: true });
+          }
+          if (!db.objectStoreNames.contains('sale_items')) {
+            db.createObjectStore('sale_items', { keyPath: 'id', autoIncrement: true });
+          }
+        };
+      });
+    }
+    
+    async function seedInitialData() {
+      const products = await getAllProducts();
+      if (products.length === 0) {
+        const defaultProducts = [
+          { name: '🥛 Fresh Milk 1L', price: 3.99, quantity: 50, barcode: '890123456789', created_at: new Date().toISOString() },
+          { name: '🍞 Wheat Bread', price: 2.49, quantity: 30, barcode: '890123456788', created_at: new Date().toISOString() },
+          { name: '🥚 Eggs (12pcs)', price: 4.29, quantity: 25, barcode: '890123456787', created_at: new Date().toISOString() },
+          { name: '🍚 White Rice 1kg', price: 5.99, quantity: 40, barcode: '890123456786', created_at: new Date().toISOString() },
+          { name: '🫒 Cooking Oil 1L', price: 7.49, quantity: 20, barcode: '890123456785', created_at: new Date().toISOString() },
+          { name: '🍬 Sugar 1kg', price: 1.99, quantity: 60, barcode: '890123456784', created_at: new Date().toISOString() },
+          { name: '🧂 Salt 500g', price: 0.99, quantity: 100, barcode: '890123456783', created_at: new Date().toISOString() },
+          { name: '☕ Coffee 200g', price: 8.99, quantity: 15, barcode: '890123456782', created_at: new Date().toISOString() }
+        ];
+        for (const product of defaultProducts) {
+          await addProduct(product);
+        }
+        showToast('Welcome! Sample products loaded');
+      }
+    }
+    
+    // CRUD Operations
+    function getAllProducts() {
+      return new Promise((resolve) => {
+        if (!db) { resolve([]); return; }
+        const transaction = db.transaction(['products'], 'readonly');
+        const request = transaction.objectStore('products').getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => resolve([]);
+      });
+    }
+    
+    function addProduct(product) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['products'], 'readwrite');
+        const request = transaction.objectStore('products').add(product);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+    
+    function updateProduct(product) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['products'], 'readwrite');
+        const request = transaction.objectStore('products').put(product);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+    
+    function deleteProduct(id) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['products'], 'readwrite');
+        const request = transaction.objectStore('products').delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+    
+    function getSales() {
+      return new Promise((resolve) => {
+        if (!db) { resolve([]); return; }
+        const transaction = db.transaction(['sales'], 'readonly');
+        const request = transaction.objectStore('sales').getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => resolve([]);
+      });
+    }
+    
+    function addSale(sale) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['sales'], 'readwrite');
+        const request = transaction.objectStore('sales').add(sale);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+    
+    function addSaleItem(item) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['sale_items'], 'readwrite');
+        const request = transaction.objectStore('sale_items').add(item);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    }
+    
+    // Render Functions
+    async function renderDashboard() {
+      const products = await getAllProducts();
+      const sales = await getSales();
+      
+      const totalProducts = products.length;
+      const lowStock = products.filter(p => p.quantity <= 5).length;
+      
+      const today = new Date().toISOString().split('T')[0];
+      const todaySales = sales.filter(sale => sale.created_at?.split('T')[0] === today)
+        .reduce((sum, sale) => sum + (sale.total || 0), 0);
+      
+      const totalRevenue = sales.reduce((sum, sale) => sum + (sale.total || 0), 0);
+      
+      const content = document.getElementById('pageContent');
+      content.innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">${totalProducts}</div>
+            <div class="stat-label">Total Products</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">$${todaySales.toFixed(2)}</div>
+            <div class="stat-label">Today's Sales</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${lowStock}</div>
+            <div class="stat-label">Low Stock</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">$${totalRevenue.toFixed(2)}</div>
+            <div class="stat-label">Total Revenue</div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>⚡ Quick Actions</h3>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button id="quickPosBtn" class="btn-primary">💰 New Sale</button>
+            <button id="quickProductBtn" class="btn-secondary">📦 Add Product</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>📊 Recent Sales</h3>
+          ${sales.slice(-5).reverse().map(sale => `
+            <div class="flex-between" style="padding: 0.8rem 0; border-bottom: 1px solid #e2e8f0;">
+              <span>Sale #${sale.id}</span>
+              <strong class="text-success">$${sale.total.toFixed(2)}</strong>
+              <span style="font-size: 0.8rem;">${new Date(sale.created_at).toLocaleString()}</span>
+            </div>
+          `).join('') || '<p class="text-center">No sales yet. Make your first sale!</p>'}
+        </div>
+      `;
+      
+      document.getElementById('quickPosBtn')?.addEventListener('click', () => navigateTo('pos'));
+      document.getElementById('quickProductBtn')?.addEventListener('click', () => navigateTo('products'));
+    }
+    
+    async function renderProducts() {
+      const products = await getAllProducts();
+      
+      const content = document.getElementById('pageContent');
+      content.innerHTML = `
+        <div class="card">
+          <h3>📦 Product Management</h3>
+          <div class="search-box">
+            <input type="text" id="searchProduct" placeholder="🔍 Search by name or barcode...">
+            <button id="addProductBtn" class="btn-primary" style="width: auto;">➕ Add</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr><th>Name</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="productsList"></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+      
+      function renderList(list) {
+        const tbody = document.getElementById('productsList');
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="text-center">No products found</td></tr>';
+          return;
+        }
+        tbody.innerHTML = list.map(p => `
+          <tr>
+            <td><strong>${escapeHtml(p.name)}</strong><br><small>📷 ${p.barcode || 'no barcode'}</small></td>
+            <td>$${p.price.toFixed(2)}</td>
+            <td>${p.quantity} ${p.quantity <= 5 ? '<span class="badge badge-warning">Low!</span>' : ''}</td>
+            <td>
+              <button class="btn-small edit-product" data-id="${p.id}" style="background:#3b82f6; color:white; border:none; padding:0.3rem 0.6rem; border-radius:8px; margin-right:0.3rem;">✏️</button>
+              <button class="btn-small delete-product" data-id="${p.id}" style="background:#ef4444; color:white; border:none; padding:0.3rem 0.6rem; border-radius:8px;">🗑️</button>
+            </td>
+          </tr>
+        `).join('');
+        
+        document.querySelectorAll('.edit-product').forEach(btn => {
+          btn.onclick = async () => {
+            const id = parseInt(btn.dataset.id);
+            const product = list.find(p => p.id === id);
+            const name = prompt('Product name:', product.name);
+            if (name) product.name = name;
+            const price = parseFloat(prompt('Price:', product.price));
+            if (!isNaN(price)) product.price = price;
+            const qty = parseInt(prompt('Quantity:', product.quantity));
+            if (!isNaN(qty)) product.quantity = qty;
+            await updateProduct(product);
+            showToast('Product updated');
+            renderProducts();
+          };
+        });
+        
+        document.querySelectorAll('.delete-product').forEach(btn => {
+          btn.onclick = async () => {
+            if (confirm('Delete this product?')) {
+              await deleteProduct(parseInt(btn.dataset.id));
+              showToast('Product deleted');
+              renderProducts();
+            }
+          };
+        });
+      }
+      
+      renderList(products);
+      
+      document.getElementById('searchProduct').oninput = (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = products.filter(p => 
+          p.name.toLowerCase().includes(term) || 
+          (p.barcode && p.barcode.toLowerCase().includes(term))
+        );
+        renderList(filtered);
+      };
+      
+      document.getElementById('addProductBtn').onclick = async () => {
+        const name = prompt('Product name:');
+        if (!name) return;
+        const price = parseFloat(prompt('Price:'));
+        if (isNaN(price)) return;
+        const qty = parseInt(prompt('Quantity:'));
+        if (isNaN(qty)) return;
+        const barcode = prompt('Barcode (optional):') || '';
+        await addProduct({ name, price, quantity: qty, barcode, created_at: new Date().toISOString() });
+        showToast('Product added');
+        renderProducts();
+      };
+    }
+    
+    let currentCart = [];
+    
+    async function renderPOS() {
+      const products = await getAllProducts();
+      currentCart = [];
+      
+      const content = document.getElementById('pageContent');
+      content.innerHTML = `
+        <div class="card">
+          <h3>💰 Point of Sale</h3>
+          <div class="search-box">
+            <input type="text" id="posSearch" placeholder="🔍 Search product...">
+          </div>
+          <div id="searchResults"></div>
+        </div>
+        <div class="card">
+          <h3>🛒 Cart</h3>
+          <div id="cartItems"></div>
+          <div class="flex-between mt-2">
+            <strong>Total:</strong>
+            <span class="cart-total" id="cartTotal">$0.00</span>
+          </div>
+          <button id="completeSaleBtn" class="btn-primary btn-success mt-2">✅ Complete Sale</button>
+        </div>
+      `;
+      
+      function updateCart() {
+        const cartDiv = document.getElementById('cartItems');
+        let total = 0;
+        if (currentCart.length === 0) {
+          cartDiv.innerHTML = '<p class="text-center">Cart is empty</p>';
+        } else {
+          cartDiv.innerHTML = currentCart.map((item, idx) => {
+            total += item.price * item.qty;
+            return `
+              <div class="cart-item">
+                <div><strong>${escapeHtml(item.name)}</strong><br>$${item.price} x ${item.qty}</div>
+                <div><strong>$${(item.price * item.qty).toFixed(2)}</strong> <button class="remove-cart" data-idx="${idx}" style="background:#ef4444; border:none; padding:0.2rem 0.5rem; border-radius:8px; color:white; margin-left:0.5rem;">X</button></div>
+              </div>
+            `;
+          }).join('');
+        }
+        document.getElementById('cartTotal').innerText = `$${total.toFixed(2)}`;
+        
+        document.querySelectorAll('.remove-cart').forEach(btn => {
+          btn.onclick = () => {
+            currentCart.splice(parseInt(btn.dataset.idx), 1);
+            updateCart();
+          };
+        });
+      }
+      
+      function searchProducts() {
+        const term = document.getElementById('posSearch').value.toLowerCase();
+        const filtered = products.filter(p => 
+          p.name.toLowerCase().includes(term) || 
+          (p.barcode && p.barcode.includes(term))
+        );
+        
+        const resultsDiv = document.getElementById('searchResults');
+        resultsDiv.innerHTML = filtered.map(p => `
+          <div class="product-item">
+            <div><strong>${escapeHtml(p.name)}</strong><br>$${p.price} | Stock: ${p.quantity}</div>
+            <button class="add-to-cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" data-stock="${p.quantity}" style="background:#10b981; border:none; padding:0.5rem 1rem; border-radius:40px; color:white;">➕ Add</button>
+          </div>
+        `).join('');
+        
+        document.querySelectorAll('.add-to-cart').forEach(btn => {
+          btn.onclick = () => {
+            const id = parseInt(btn.dataset.id);
+            const name = btn.dataset.name;
+            const price = parseFloat(btn.dataset.price);
+            const stock = parseInt(btn.dataset.stock);
+            const existing = currentCart.find(i => i.id === id);
+            if (existing) {
+              if (existing.qty + 1 <= stock) existing.qty++;
+              else { showToast('Not enough stock'); return; }
+            } else {
+              if (stock > 0) currentCart.push({ id, name, price, qty: 1 });
+              else { showToast('Out of stock'); return; }
+            }
+            updateCart();
+            showToast(`Added ${name}`);
+          };
+        });
+      }
+      
+      document.getElementById('posSearch').oninput = searchProducts;
+      searchProducts();
+      updateCart();
+      
+      document.getElementById('completeSaleBtn').onclick = async () => {
+        if (currentCart.length === 0) { showToast('Cart empty'); return; }
+        const total = currentCart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const saleId = await addSale({ total, created_at: new Date().toISOString() });
+        
+        for (const item of currentCart) {
+          await addSaleItem({ sale_id: saleId, product_id: item.id, quantity: item.qty, price: item.price });
+          const product = products.find(p => p.id === item.id);
+          if (product) {
+            product.quantity -= item.qty;
+            await updateProduct(product);
+          }
+        }
+        showToast(`Sale complete! Total: $${total.toFixed(2)}`);
+        renderPOS();
+      };
+    }
+    
+    async function renderReports() {
+      const products = await getAllProducts();
+      const sales = await getSales();
+      const totalRevenue = sales.reduce((s, sale) => s + (sale.total || 0), 0);
+      
+      const content = document.getElementById('pageContent');
+      content.innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">$${totalRevenue.toFixed(2)}</div><div class="stat-label">Total Revenue</div></div>
+          <div class="stat-card"><div class="stat-number">${sales.length}</div><div class="stat-label">Total Sales</div></div>
+          <div class="stat-card"><div class="stat-number">${products.length}</div><div class="stat-label">Products</div></div>
+        </div>
+        <div class="card">
+          <h3>📅 All Transactions</h3>
+          ${sales.slice(-10).reverse().map(sale => `
+            <div class="flex-between" style="padding: 0.8rem 0; border-bottom: 1px solid #e2e8f0;">
+              <span>Sale #${sale.id}</span>
+              <strong class="text-success">$${sale.total.toFixed(2)}</strong>
+              <span>${new Date(sale.created_at).toLocaleDateString()}</span>
+            </div>
+          `).join('') || '<p>No transactions yet</p>'}
+        </div>
+      `;
+    }
+    
+    function navigateTo(page) {
+      if (page === 'dashboard') renderDashboard();
+      else if (page === 'products') renderProducts();
+      else if (page === 'pos') renderPOS();
+      else if (page === 'reports') renderReports();
+      
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      const active = document.querySelector(`[data-page="${page}"]`);
+      if (active) active.classList.add('active');
+    }
+    
+    function login(email, password) {
+      if (email === 'admin@hellobuyer.com' && password === 'admin123') {
+        currentUser = { email, name: 'Admin' };
+        localStorage.setItem('hellobuyer_user', JSON.stringify(currentUser));
+        return true;
+      }
+      return false;
+    }
+    
+    function checkAuth() {
+      const user = localStorage.getItem('hellobuyer_user');
+      if (user) { currentUser = JSON.parse(user); return true; }
+      return false;
+    }
+    
+    function logout() {
+      localStorage.removeItem('hellobuyer_user');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('appScreen').classList.add('hidden');
+      showToast('Logged out');
+    }
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+    }
+    
+    // Initialize App
+    async function initApp() {
+      await initDB();
+      
+      document.getElementById('loginBtn').onclick = () => {
+        const email = document.getElementById('loginEmail').value;
+        const pwd = document.getElementById('loginPassword').value;
+        if (login(email, pwd)) {
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('appScreen').classList.remove('hidden');
+          document.getElementById('userName').innerText = currentUser.name;
+          renderDashboard();
+          document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.onclick = () => navigateTo(btn.dataset.page);
+          });
+          document.getElementById('logoutBtn').onclick = logout;
+        } else {
+          showToast('Invalid credentials! Use: admin@hellobuyer.com / admin123');
+        }
+      };
+      
+      document.getElementById('loginPassword').onkeypress = (e) => {
+        if (e.key === 'Enter') document.getElementById('loginBtn').click();
+      };
+      
+      if (checkAuth()) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        document.getElementById('userName').innerText = currentUser.name;
+        renderDashboard();
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.onclick = () => navigateTo(btn.dataset.page);
+        });
+        document.getElementById('logoutBtn').onclick = logout;
+      }
+    }
+    
+    initApp();
+  </script>
+</body>
+</html>
