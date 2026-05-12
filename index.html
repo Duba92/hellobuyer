@@ -19,16 +19,15 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: #f0f2f5;
       color: #1a2a3a;
-      overflow-x: hidden;
     }
 
-    /* Desktop Layout - Sidebar */
+    /* Desktop Layout */
     .app-layout {
       display: flex;
       min-height: 100vh;
     }
 
-    /* Sidebar - Desktop */
+    /* Sidebar */
     .sidebar {
       width: 260px;
       background: linear-gradient(180deg, #1e4a76 0%, #0f2b40 100%);
@@ -51,11 +50,6 @@
       margin-bottom: 0.3rem;
     }
 
-    .sidebar-header p {
-      font-size: 0.75rem;
-      opacity: 0.8;
-    }
-
     .sidebar-nav {
       padding: 1rem 0;
     }
@@ -66,13 +60,12 @@
       gap: 1rem;
       padding: 0.8rem 1.5rem;
       color: white;
-      text-decoration: none;
-      transition: all 0.2s;
       cursor: pointer;
       width: 100%;
       border: none;
       background: none;
       font-size: 1rem;
+      text-align: left;
     }
 
     .sidebar-nav-item:hover {
@@ -192,6 +185,7 @@
       cursor: pointer;
       border-radius: 12px;
       transition: all 0.2s;
+      font-size: 1.2rem;
     }
 
     .bottom-nav-item.active {
@@ -199,7 +193,7 @@
       color: white;
     }
 
-    /* Content Container */
+    /* Content */
     .content-container {
       padding: 2rem;
     }
@@ -221,7 +215,7 @@
     }
 
     .stat-card {
-      background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+      background: white;
       padding: 1.2rem;
       border-radius: 16px;
       border-left: 4px solid #1e4a76;
@@ -240,7 +234,7 @@
       margin-top: 0.3rem;
     }
 
-    /* Chart Container */
+    /* Chart */
     .chart-container {
       margin: 1rem 0;
       padding: 1rem;
@@ -305,7 +299,7 @@
       color: white;
     }
 
-    input, select {
+    input {
       width: 100%;
       padding: 0.8rem;
       margin: 0.5rem 0 1rem;
@@ -368,19 +362,13 @@
 
     .toast.show {
       display: block;
-      animation: slideUp 0.3s ease;
-    }
-
-    @keyframes slideUp {
-      from { transform: translate(-50%, 100px); opacity: 0; }
-      to { transform: translate(-50%, 0); opacity: 1; }
     }
 
     .hidden {
       display: none !important;
     }
 
-    /* Login Screen */
+    /* Login */
     .login-container {
       display: flex;
       justify-content: center;
@@ -398,52 +386,46 @@
       max-width: 400px;
     }
 
-    /* Mobile Responsive */
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-2 {
+      margin-top: 1rem;
+    }
+
+    /* Mobile */
     @media (max-width: 768px) {
       .sidebar {
         transform: translateX(-100%);
       }
-      
       .sidebar.open {
         transform: translateX(0);
       }
-      
       .main-content {
         margin-left: 0;
         padding-bottom: 70px;
       }
-      
       .bottom-nav {
         display: block;
       }
-      
-      .top-bar {
-        padding: 0.8rem 1rem;
-      }
-      
       .content-container {
         padding: 1rem;
       }
-      
       .stats-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
+      }
+      .menu-toggle {
+        display: block;
       }
     }
 
-    /* Desktop menu toggle */
     .menu-toggle {
       display: none;
       background: none;
       border: none;
       font-size: 1.5rem;
       cursor: pointer;
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle {
-        display: block;
-      }
     }
 
     .offline-banner {
@@ -467,9 +449,9 @@
       </div>
       <input type="email" id="loginEmail" placeholder="Email" value="admin@hellobuyer.com">
       <input type="password" id="loginPassword" placeholder="Password" value="admin123">
-      <button id="loginBtn" class="btn-primary" style="width: 100%;">Login</button>
-      <div class="text-center" style="margin-top: 1rem; font-size: 0.8rem; color: #6b7a8a;">
-        admin@hellobuyer.com / admin123
+      <button id="loginBtn" class="btn-primary" style="width: 100%;">🔐 Login</button>
+      <div class="text-center mt-2" style="font-size: 0.8rem; color: #6b7a8a;">
+        Use: admin@hellobuyer.com / admin123
       </div>
     </div>
   </div>
@@ -516,7 +498,7 @@
       </div>
     </div>
 
-    <!-- Bottom Navigation (Mobile) -->
+    <!-- Bottom Navigation -->
     <div class="bottom-nav">
       <div class="bottom-nav-items">
         <button class="bottom-nav-item" data-page="dashboard">📊</button>
@@ -531,14 +513,13 @@
 <div id="toast" class="toast"></div>
 
 <script>
-  // ==================== HELLOBUYER ERP - FULL SYSTEM ====================
+  // ==================== HELLOBUYER ERP - FULL WORKING SYSTEM ====================
   
   let db = null;
   let currentUser = null;
   let salesChart = null;
   let currentCart = [];
   
-  // Currency: Ethiopian Birr
   const CURRENCY = 'ETB';
   
   function formatMoney(amount) {
@@ -552,10 +533,10 @@
     setTimeout(() => toast.classList.remove('show'), 2000);
   }
   
-  // IndexedDB Init
+  // IndexedDB
   function initDB() {
     return new Promise((resolve) => {
-      const request = indexedDB.open('HelloBuyerDB', 5);
+      const request = indexedDB.open('HelloBuyerDB', 6);
       request.onerror = () => resolve(null);
       request.onsuccess = () => {
         db = request.result;
@@ -581,16 +562,16 @@
     const products = await getAllProducts();
     if (products.length === 0) {
       const defaults = [
-        { name: '🥛 Fresh Milk 1L', price: 120, quantity: 50, barcode: '890123456789' },
-        { name: '🍞 Wheat Bread', price: 80, quantity: 30, barcode: '890123456788' },
-        { name: '🥚 Eggs (12pcs)', price: 150, quantity: 25, barcode: '890123456787' },
-        { name: '🍚 White Rice 1kg', price: 180, quantity: 40, barcode: '890123456786' },
-        { name: '🫒 Cooking Oil 1L', price: 250, quantity: 20, barcode: '890123456785' },
-        { name: '🍬 Sugar 1kg', price: 70, quantity: 60, barcode: '890123456784' },
-        { name: '☕ Coffee 200g', price: 300, quantity: 15, barcode: '890123456782' }
+        { name: '🥛 Fresh Milk 1L', price: 120, quantity: 50, barcode: '111111', created_at: new Date().toISOString() },
+        { name: '🍞 Wheat Bread', price: 80, quantity: 30, barcode: '222222', created_at: new Date().toISOString() },
+        { name: '🥚 Eggs (12pcs)', price: 150, quantity: 25, barcode: '333333', created_at: new Date().toISOString() },
+        { name: '🍚 White Rice 1kg', price: 180, quantity: 40, barcode: '444444', created_at: new Date().toISOString() },
+        { name: '🫒 Cooking Oil 1L', price: 250, quantity: 20, barcode: '555555', created_at: new Date().toISOString() },
+        { name: '🍬 Sugar 1kg', price: 70, quantity: 60, barcode: '666666', created_at: new Date().toISOString() },
+        { name: '☕ Coffee 200g', price: 300, quantity: 15, barcode: '777777', created_at: new Date().toISOString() }
       ];
       for (const p of defaults) {
-        await addProduct({ ...p, created_at: new Date().toISOString() });
+        await addProduct(p);
       }
     }
   }
@@ -604,11 +585,9 @@
   }
   
   function addProduct(p) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const tx = db.transaction(['products'], 'readwrite');
-      const req = tx.objectStore('products').add(p);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject();
+      tx.objectStore('products').add(p).onsuccess = (e) => resolve(e.target.result);
     });
   }
   
@@ -637,8 +616,7 @@
   function addSale(sale) {
     return new Promise((resolve) => {
       const tx = db.transaction(['sales'], 'readwrite');
-      const req = tx.objectStore('sales').add(sale);
-      req.onsuccess = () => resolve(req.result);
+      tx.objectStore('sales').add(sale).onsuccess = (e) => resolve(e.target.result);
     });
   }
   
@@ -649,7 +627,7 @@
     });
   }
   
-  // Render Dashboard with Chart
+  // Dashboard
   async function renderDashboard() {
     const products = await getAllProducts();
     const sales = await getSales();
@@ -662,7 +640,7 @@
     const todaySales = sales.filter(s => s.created_at?.split('T')[0] === today)
       .reduce((s, sale) => s + (sale.total || 0), 0);
     
-    // Sales trend data (last 7 days)
+    // Last 7 days trend
     const last7Days = [];
     const dailyTotals = [];
     for (let i = 6; i >= 0; i--) {
@@ -680,17 +658,15 @@
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-number">${totalProducts}</div><div class="stat-label">Total Products</div></div>
         <div class="stat-card"><div class="stat-number">${formatMoney(todaySales)}</div><div class="stat-label">Today's Sales</div></div>
-        <div class="stat-card"><div class="stat-number">${lowStock}</div><div class="stat-label">Low Stock Items</div></div>
+        <div class="stat-card"><div class="stat-number">${lowStock}</div><div class="stat-label">Low Stock</div></div>
         <div class="stat-card"><div class="stat-number">${formatMoney(totalRevenue)}</div><div class="stat-label">Total Revenue</div></div>
       </div>
-      
       <div class="card">
         <h3>📈 Sales Trend (Last 7 Days)</h3>
         <div class="chart-container">
           <canvas id="salesTrendChart"></canvas>
         </div>
       </div>
-      
       <div class="card">
         <h3>⚡ Quick Actions</h3>
         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
@@ -698,20 +674,18 @@
           <button id="quickProductBtn" class="btn-secondary">📦 Add Product</button>
         </div>
       </div>
-      
       <div class="card">
-        <h3>📊 Recent Transactions</h3>
+        <h3>📊 Recent Sales</h3>
         ${sales.slice(-5).reverse().map(s => `
           <div class="flex-between" style="padding: 0.8rem 0; border-bottom: 1px solid #e2e8f0;">
             <span>Sale #${s.id}</span>
             <strong>${formatMoney(s.total)}</strong>
-            <span style="font-size: 0.8rem;">${new Date(s.created_at).toLocaleString()}</span>
+            <span>${new Date(s.created_at).toLocaleDateString()}</span>
           </div>
         `).join('') || '<p>No sales yet</p>'}
       </div>
     `;
     
-    // Render chart
     const ctx = document.getElementById('salesTrendChart')?.getContext('2d');
     if (ctx) {
       if (salesChart) salesChart.destroy();
@@ -731,7 +705,6 @@
         options: {
           responsive: true,
           plugins: {
-            legend: { position: 'top' },
             tooltip: { callbacks: { label: (ctx) => `${CURRENCY} ${ctx.raw.toFixed(2)}` } }
           }
         }
@@ -742,7 +715,7 @@
     document.getElementById('quickProductBtn')?.addEventListener('click', () => navigateTo('products'));
   }
   
-  // Products Page
+  // Products
   async function renderProducts() {
     const products = await getAllProducts();
     
@@ -751,14 +724,14 @@
       <div class="card">
         <h3>📦 Product Management</h3>
         <div class="search-box">
-          <input type="text" id="searchProduct" placeholder="🔍 Search by name or barcode...">
+          <input type="text" id="searchProduct" placeholder="Search by name or barcode...">
           <button id="addProductBtn" class="btn-primary">+ Add</button>
         </div>
       </div>
       <div class="card">
         <div class="table-container">
           <table>
-            <thead><tr><th>Name</th><th>Price (${CURRENCY})</th><th>Stock</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Name</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
             <tbody id="productsList"></tbody>
           </table>
         </div>
@@ -769,7 +742,7 @@
       const tbody = document.getElementById('productsList');
       tbody.innerHTML = list.map(p => `
         <tr>
-          <td><strong>${escapeHtml(p.name)}</strong><br><small>📷 ${p.barcode || 'no barcode'}</small></td>
+          <td><strong>${escapeHtml(p.name)}</strong><br><small>${p.barcode || 'no barcode'}</small></td>
           <td>${formatMoney(p.price)}</td>
           <td>${p.quantity} ${p.quantity <= 5 ? '<span class="badge badge-warning">Low!</span>' : ''}</td>
           <td>
@@ -824,7 +797,7 @@
     };
   }
   
-  // POS Page
+  // POS
   async function renderPOS() {
     const products = await getAllProducts();
     currentCart = [];
@@ -833,13 +806,13 @@
     content.innerHTML = `
       <div class="card">
         <h3>💰 Point of Sale</h3>
-        <input type="text" id="posSearch" placeholder="🔍 Search product...">
+        <input type="text" id="posSearch" placeholder="Search product...">
         <div id="searchResults"></div>
       </div>
       <div class="card">
         <h3>🛒 Cart</h3>
         <div id="cartItems"></div>
-        <div class="flex-between mt-2">
+        <div class="flex-between" style="margin-top: 1rem;">
           <strong>Total:</strong>
           <span class="cart-total" id="cartTotal">${formatMoney(0)}</span>
         </div>
@@ -851,7 +824,7 @@
       let total = 0;
       const cartDiv = document.getElementById('cartItems');
       if (currentCart.length === 0) {
-        cartDiv.innerHTML = '<p class="text-center">Cart is empty</p>';
+        cartDiv.innerHTML = '<p>Cart is empty</p>';
       } else {
         cartDiv.innerHTML = currentCart.map((item, idx) => {
           total += item.price * item.qty;
@@ -925,13 +898,12 @@
     };
   }
   
-  // Reports Page with Trend
+  // Reports
   async function renderReports() {
     const products = await getAllProducts();
     const sales = await getSales();
     const totalRevenue = sales.reduce((s, sale) => s + (sale.total || 0), 0);
     
-    // Best selling products
     const saleItems = await new Promise((resolve) => {
       const tx = db.transaction(['sale_items'], 'readonly');
       tx.objectStore('sale_items').getAll().onsuccess = (e) => resolve(e.target.result || []);
@@ -950,7 +922,6 @@
         <div class="stat-card"><div class="stat-number">${sales.length}</div><div class="stat-label">Total Sales</div></div>
         <div class="stat-card"><div class="stat-number">${products.length}</div><div class="stat-label">Products</div></div>
       </div>
-      
       <div class="card">
         <h3>🏆 Best Selling Products</h3>
         ${bestSellers.map(([id, qty]) => {
@@ -958,7 +929,6 @@
           return `<div class="flex-between" style="padding: 0.5rem 0;"><span>${p ? p.name : 'Unknown'}</span><strong>${qty} sold</strong></div>`;
         }).join('') || '<p>No sales data</p>'}
       </div>
-      
       <div class="card">
         <h3>📅 All Transactions</h3>
         ${sales.slice(-10).reverse().map(s => `
@@ -973,7 +943,7 @@
   }
   
   function navigateTo(page) {
-    document.getElementById('pageTitle').innerText = page.charAt(0).toUpperCase() + page.slice(1);
+    document.getElementById('pageTitle').innerHTML = page.charAt(0).toUpperCase() + page.slice(1);
     if (page === 'dashboard') renderDashboard();
     else if (page === 'products') renderProducts();
     else if (page === 'pos') renderPOS();
@@ -1002,7 +972,10 @@
   
   function checkAuth() {
     const user = localStorage.getItem('hellobuyer_user');
-    if (user) { currentUser = JSON.parse(user); return true; }
+    if (user) {
+      currentUser = JSON.parse(user);
+      return true;
+    }
     return false;
   }
   
@@ -1018,75 +991,109 @@
     return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
   }
   
-  // Offline detection
-  window.addEventListener('online', () => document.getElementById('offlineBanner')?.classList.add('hidden'));
-  window.addEventListener('offline', () => document.getElementById('offlineBanner')?.classList.remove('hidden'));
-  
-  // Initialize
+  // Initialize App - FIXED LOGIN
   async function init() {
     await initDB();
     
-    // Login
-    document.getElementById('loginBtn').onclick = () => {
-      const email = document.getElementById('loginEmail').value;
-      const pwd = document.getElementById('loginPassword').value;
-      if (login(email, pwd)) {
-        document.getElementById('loginScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.remove('hidden');
-        document.getElementById('userName').innerText = currentUser.name;
-        renderDashboard();
-        
-        document.querySelectorAll('.sidebar-nav-item[data-page]').forEach(btn => {
-          btn.onclick = () => navigateTo(btn.dataset.page);
-        });
-        document.querySelectorAll('.bottom-nav-item').forEach(btn => {
-          btn.onclick = () => navigateTo(btn.dataset.page);
-        });
-        document.getElementById('sidebarLogout').onclick = logout;
-        document.getElementById('dropdownLogout').onclick = logout;
-      } else {
-        showToast('Invalid credentials');
-      }
-    };
+    // Setup login button - DIRECT EVENT LISTENER
+    const loginBtn = document.getElementById('loginBtn');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
     
-    document.getElementById('loginPassword').onkeypress = (e) => {
-      if (e.key === 'Enter') document.getElementById('loginBtn').click();
-    };
+    if (loginBtn) {
+      loginBtn.onclick = function(e) {
+        e.preventDefault();
+        const email = loginEmail.value;
+        const password = loginPassword.value;
+        
+        if (email === 'admin@hellobuyer.com' && password === 'admin123') {
+          currentUser = { email, name: 'Admin' };
+          localStorage.setItem('hellobuyer_user', JSON.stringify(currentUser));
+          
+          document.getElementById('loginScreen').classList.add('hidden');
+          document.getElementById('appScreen').classList.remove('hidden');
+          document.getElementById('userName').innerHTML = 'Admin';
+          
+          renderDashboard();
+          
+          // Setup navigation
+          document.querySelectorAll('.sidebar-nav-item[data-page]').forEach(btn => {
+            btn.onclick = () => navigateTo(btn.getAttribute('data-page'));
+          });
+          document.querySelectorAll('.bottom-nav-item').forEach(btn => {
+            btn.onclick = () => navigateTo(btn.getAttribute('data-page'));
+          });
+          
+          document.getElementById('sidebarLogout').onclick = logout;
+          document.getElementById('dropdownLogout').onclick = logout;
+          
+          showToast('Welcome to HelloBuyer ERP!');
+        } else {
+          showToast('Invalid credentials! Use: admin@hellobuyer.com / admin123');
+        }
+      };
+    }
+    
+    // Enter key support
+    if (loginPassword) {
+      loginPassword.onkeypress = function(e) {
+        if (e.key === 'Enter') {
+          loginBtn.click();
+        }
+      };
+    }
     
     // Profile dropdown
     const profileBtn = document.getElementById('profileBtn');
-    const dropdown = document.getElementById('profileDropdown');
-    profileBtn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      dropdown.classList.toggle('show');
-    });
-    document.addEventListener('click', () => dropdown?.classList.remove('show'));
+    const profileDropdown = document.getElementById('profileDropdown');
+    if (profileBtn) {
+      profileBtn.onclick = function(e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('show');
+      };
+      document.addEventListener('click', function() {
+        profileDropdown.classList.remove('show');
+      });
+    }
     
     // Mobile menu toggle
-    document.getElementById('menuToggle')?.addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('open');
-    });
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    if (menuToggle) {
+      menuToggle.onclick = function() {
+        sidebar.classList.toggle('open');
+      };
+    }
     
-    if (checkAuth()) {
+    // Check if already logged in
+    const savedUser = localStorage.getItem('hellobuyer_user');
+    if (savedUser) {
+      currentUser = JSON.parse(savedUser);
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('appScreen').classList.remove('hidden');
-      document.getElementById('userName').innerText = currentUser.name;
+      document.getElementById('userName').innerHTML = currentUser.name || 'Admin';
       renderDashboard();
       
       document.querySelectorAll('.sidebar-nav-item[data-page]').forEach(btn => {
-        btn.onclick = () => navigateTo(btn.dataset.page);
+        btn.onclick = () => navigateTo(btn.getAttribute('data-page'));
       });
       document.querySelectorAll('.bottom-nav-item').forEach(btn => {
-        btn.onclick = () => navigateTo(btn.dataset.page);
+        btn.onclick = () => navigateTo(btn.getAttribute('data-page'));
       });
       document.getElementById('sidebarLogout').onclick = logout;
       document.getElementById('dropdownLogout').onclick = logout;
     }
     
-    // Check offline status
-    if (!navigator.onLine) document.getElementById('offlineBanner')?.classList.remove('hidden');
+    // Offline detection
+    window.addEventListener('online', () => {
+      document.getElementById('offlineBanner')?.classList.add('hidden');
+    });
+    window.addEventListener('offline', () => {
+      document.getElementById('offlineBanner')?.classList.remove('hidden');
+    });
   }
   
+  // Start the app
   init();
 </script>
 </body>
