@@ -79,7 +79,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar - Desktop */
+        /* Sidebar */
         .sidebar {
             width: 260px;
             background: linear-gradient(180deg, #1e4a76 0%, #0f2b40 100%);
@@ -129,11 +129,10 @@
             color: #1e4a76;
         }
 
-        /* Profile Section in Sidebar */
+        /* Profile Section */
         .sidebar-profile {
             padding: 20px;
             border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: auto;
             position: absolute;
             bottom: 0;
             width: 100%;
@@ -166,7 +165,7 @@
 
         .logout-dropdown {
             position: absolute;
-            bottom: 70px;
+            bottom: 80px;
             left: 20px;
             right: 20px;
             background: white;
@@ -225,7 +224,7 @@
             cursor: pointer;
         }
 
-        /* Bottom Navigation - Mobile Only */
+        /* Bottom Navigation */
         .bottom-nav {
             display: none;
             position: fixed;
@@ -356,6 +355,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .product-item, .cart-item {
@@ -398,7 +398,7 @@
             font-weight: 600;
         }
 
-        /* Mobile Responsive */
+        /* Mobile */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -461,6 +461,12 @@
             from { opacity: 0; transform: translate(-50%, 20px); }
             to { opacity: 1; transform: translate(-50%, 0); }
         }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -475,6 +481,7 @@
         <input type="password" id="loginPassword" placeholder="Password" value="admin123">
         <button onclick="doLogin()">LOGIN</button>
         <div id="loginError" class="error-msg"></div>
+        <div style="margin-top: 15px; font-size: 12px; color: #666;">Demo: admin@hellobuyer.com / admin123</div>
     </div>
 </div>
 
@@ -518,12 +525,12 @@
             <div id="offlineBanner" class="offline-banner hidden">📡 Offline Mode - Sales are saved locally</div>
 
             <div class="content-container" id="pageContent">
-                <!-- Dynamic content loads here -->
+                <div class="empty-state">Loading...</div>
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION (MOBILE) -->
+    <!-- BOTTOM NAVIGATION -->
     <div class="bottom-nav">
         <div class="bottom-nav-items">
             <button class="bottom-nav-item" data-page="dashboard">📊</button>
@@ -537,7 +544,7 @@
 <div id="toast" class="toast"></div>
 
 <script>
-    // ============ HELLOBUYER ERP - FULL WORKING SYSTEM ============
+    // ============ HELLOBUYER ERP - FULLY WORKING SYSTEM ============
     
     let db = null;
     let currentUser = null;
@@ -558,15 +565,16 @@
     
     // ============ INDEXEDDB ============
     function initDatabase() {
-        return new Promise((resolve) => {
-            const request = indexedDB.open('HelloBuyerDB', 3);
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('HelloBuyerDB', 5);
             
             request.onerror = function() {
-                resolve(false);
+                reject();
             };
             
             request.onsuccess = function() {
                 db = request.result;
+                console.log('Database opened');
                 seedData();
                 resolve(true);
             };
@@ -582,32 +590,30 @@
                 if (!db.objectStoreNames.contains('sale_items')) {
                     db.createObjectStore('sale_items', { keyPath: 'id', autoIncrement: true });
                 }
+                console.log('Database created');
             };
         });
     }
     
-    function seedData() {
-        const transaction = db.transaction(['products'], 'readonly');
-        const store = transaction.objectStore('products');
-        const countRequest = store.count();
-        
-        countRequest.onsuccess = function() {
-            if (countRequest.result === 0) {
-                const products = [
-                    { name: '🥛 Fresh Milk 1L', price: 120, quantity: 50, barcode: '111111', created_at: new Date().toISOString() },
-                    { name: '🍞 Wheat Bread', price: 80, quantity: 30, barcode: '222222', created_at: new Date().toISOString() },
-                    { name: '🥚 Eggs 12pcs', price: 150, quantity: 25, barcode: '333333', created_at: new Date().toISOString() },
-                    { name: '🍚 White Rice 1kg', price: 180, quantity: 40, barcode: '444444', created_at: new Date().toISOString() },
-                    { name: '🫒 Cooking Oil 1L', price: 250, quantity: 20, barcode: '555555', created_at: new Date().toISOString() },
-                    { name: '🍬 Sugar 1kg', price: 70, quantity: 60, barcode: '666666', created_at: new Date().toISOString() },
-                    { name: '☕ Coffee 200g', price: 300, quantity: 15, barcode: '777777', created_at: new Date().toISOString() }
-                ];
-                
-                const writeTransaction = db.transaction(['products'], 'readwrite');
-                const productStore = writeTransaction.objectStore('products');
-                products.forEach(p => productStore.add(p));
+    async function seedData() {
+        const products = await getAllProducts();
+        if (products.length === 0) {
+            const sampleProducts = [
+                { name: '🥛 Fresh Milk 1L', price: 120, quantity: 50, barcode: '111111', created_at: new Date().toISOString() },
+                { name: '🍞 Wheat Bread', price: 80, quantity: 30, barcode: '222222', created_at: new Date().toISOString() },
+                { name: '🥚 Eggs 12pcs', price: 150, quantity: 25, barcode: '333333', created_at: new Date().toISOString() },
+                { name: '🍚 White Rice 1kg', price: 180, quantity: 40, barcode: '444444', created_at: new Date().toISOString() },
+                { name: '🫒 Cooking Oil 1L', price: 250, quantity: 20, barcode: '555555', created_at: new Date().toISOString() },
+                { name: '🍬 Sugar 1kg', price: 70, quantity: 60, barcode: '666666', created_at: new Date().toISOString() },
+                { name: '☕ Coffee 200g', price: 300, quantity: 15, barcode: '777777', created_at: new Date().toISOString() }
+            ];
+            
+            for (const p of sampleProducts) {
+                await addProduct(p);
             }
-        };
+            console.log('Sample products added');
+            showToast('Sample products loaded!');
+        }
     }
     
     function getAllProducts() {
@@ -620,27 +626,30 @@
         });
     }
     
-    function addProduct(product) {
-        return new Promise((resolve) => {
+    async function addProduct(product) {
+        return new Promise((resolve, reject) => {
             const transaction = db.transaction(['products'], 'readwrite');
             const request = transaction.objectStore('products').add(product);
             request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject();
         });
     }
     
-    function updateProduct(product) {
-        return new Promise((resolve) => {
+    async function updateProduct(product) {
+        return new Promise((resolve, reject) => {
             const transaction = db.transaction(['products'], 'readwrite');
-            transaction.objectStore('products').put(product);
-            resolve();
+            const request = transaction.objectStore('products').put(product);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject();
         });
     }
     
-    function deleteProduct(id) {
-        return new Promise((resolve) => {
+    async function deleteProduct(id) {
+        return new Promise((resolve, reject) => {
             const transaction = db.transaction(['products'], 'readwrite');
-            transaction.objectStore('products').delete(id);
-            resolve();
+            const request = transaction.objectStore('products').delete(id);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject();
         });
     }
     
@@ -654,23 +663,35 @@
         });
     }
     
-    function addSale(sale) {
-        return new Promise((resolve) => {
+    async function addSale(sale) {
+        return new Promise((resolve, reject) => {
             const transaction = db.transaction(['sales'], 'readwrite');
             const request = transaction.objectStore('sales').add(sale);
             request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject();
         });
     }
     
-    function addSaleItem(item) {
-        return new Promise((resolve) => {
+    async function addSaleItem(item) {
+        return new Promise((resolve, reject) => {
             const transaction = db.transaction(['sale_items'], 'readwrite');
-            transaction.objectStore('sale_items').add(item);
-            resolve();
+            const request = transaction.objectStore('sale_items').add(item);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject();
         });
     }
     
-    // ============ DASHBOARD WITH CHART ============
+    function getAllSaleItems() {
+        return new Promise((resolve) => {
+            if (!db) { resolve([]); return; }
+            const transaction = db.transaction(['sale_items'], 'readonly');
+            const request = transaction.objectStore('sale_items').getAll();
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = () => resolve([]);
+        });
+    }
+    
+    // ============ DASHBOARD ============
     async function showDashboard() {
         const products = await getAllProducts();
         const sales = await getAllSales();
@@ -724,8 +745,8 @@
             <div class="card">
                 <h3>⚡ Quick Actions</h3>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn-primary" onclick="navigateToPage('pos')">💰 Make a Sale</button>
-                    <button class="btn-secondary" onclick="navigateToPage('products')">📦 Add Product</button>
+                    <button class="btn-primary" onclick="window.navigateToPage('pos')">💰 Make a Sale</button>
+                    <button class="btn-secondary" onclick="window.navigateToPage('products')">📦 Add Product</button>
                 </div>
             </div>
             
@@ -735,43 +756,46 @@
                     <div style="padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
                         <span>Sale #${s.id}</span>
                         <strong>${formatMoney(s.total)}</strong>
-                        <span style="color: #666;">${new Date(s.date).toLocaleDateString()}</span>
+                        <span style="color: #666;">${s.date ? new Date(s.date).toLocaleDateString() : 'N/A'}</span>
                     </div>
-                `).join('') || '<p style="text-align:center;">No sales yet</p>'}
+                `).join('') || '<div class="empty-state">No sales yet. Make your first sale!</div>'}
             </div>
         `;
         
         document.getElementById('pageContent').innerHTML = html;
         
         // Render chart
-        const ctx = document.getElementById('trendChart')?.getContext('2d');
-        if (ctx) {
-            if (salesChart) salesChart.destroy();
-            salesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: last7Days,
-                    datasets: [{
-                        label: `Daily Sales (${CURRENCY})`,
-                        data: dailyTotals,
-                        borderColor: '#1e4a76',
-                        backgroundColor: 'rgba(30, 74, 118, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: (ctx) => `${CURRENCY} ${ctx.raw.toFixed(2)}`
+        setTimeout(() => {
+            const ctx = document.getElementById('trendChart')?.getContext('2d');
+            if (ctx) {
+                if (salesChart) salesChart.destroy();
+                salesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: last7Days,
+                        datasets: [{
+                            label: `Daily Sales (${CURRENCY})`,
+                            data: dailyTotals,
+                            borderColor: '#1e4a76',
+                            backgroundColor: 'rgba(30, 74, 118, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => `${CURRENCY} ${ctx.raw.toFixed(2)}`
+                                }
                             }
                         }
                     }
-                }
-            });
-        }
+                });
+            }
+        }, 100);
     }
     
     // ============ PRODUCTS ============
@@ -783,14 +807,21 @@
                 <h3>📦 Product Management</h3>
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="Search by name or barcode..." style="flex:1;">
-                    <button class="btn-primary" onclick="addNewProduct()">+ Add Product</button>
+                    <button class="btn-primary" onclick="window.addNewProduct()">+ Add Product</button>
                 </div>
                 <div style="overflow-x: auto;">
-                    <table>
+                    <table style="width:100%;">
                         <thead>
-                            <tr><th>Name</th><th>Price (${CURRENCY})</th><th>Stock</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price (${CURRENCY})</th>
+                                <th>Stock</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
-                        <tbody id="productsTable"></tbody>
+                        <tbody id="productsTable">
+                            <tr><td colspan="4" class="empty-state">Loading products...</td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -800,18 +831,23 @@
         
         function renderProducts(list) {
             const tbody = document.getElementById('productsTable');
+            if (!tbody) return;
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No products found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No products found. Click "Add Product" to get started.</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(p => `
                 <tr>
-                    <td><strong>${p.name}</strong><br><small style="color:#666;">${p.barcode || 'no barcode'}</small>${p.quantity <= 5 ? ' <span class="badge-warning">Low Stock</span>' : ''}</td>
+                    <td>
+                        <strong>${escapeHtml(p.name)}</strong><br>
+                        <small style="color:#666;">${p.barcode || 'no barcode'}</small>
+                        ${p.quantity <= 5 ? ' <span class="badge-warning">Low Stock</span>' : ''}
+                    </td>
                     <td>${formatMoney(p.price)}</td>
                     <td>${p.quantity}</td>
                     <td>
-                        <button class="btn-primary" onclick="editProduct(${p.id})" style="padding:5px 10px; margin-right:5px;">✏️ Edit</button>
-                        <button class="btn-danger" onclick="deleteProductById(${p.id})" style="padding:5px 10px;">🗑️ Delete</button>
+                        <button class="btn-primary" onclick="window.editProduct(${p.id})" style="padding:5px 10px; margin-right:5px;">✏️ Edit</button>
+                        <button class="btn-danger" onclick="window.deleteProductById(${p.id})" style="padding:5px 10px;">🗑️ Delete</button>
                     </td>
                 </tr>
             `).join('');
@@ -819,11 +855,17 @@
         
         renderProducts(products);
         
-        document.getElementById('searchInput').oninput = (e) => {
-            const term = e.target.value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(term) || (p.barcode && p.barcode.includes(term)));
-            renderProducts(filtered);
-        };
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.oninput = (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = products.filter(p => 
+                    p.name.toLowerCase().includes(term) || 
+                    (p.barcode && p.barcode.toLowerCase().includes(term))
+                );
+                renderProducts(filtered);
+            };
+        }
     }
     
     // ============ POS ============
@@ -835,16 +877,20 @@
             <div class="card">
                 <h3>💰 Point of Sale</h3>
                 <input type="text" id="posSearch" placeholder="Search products by name or barcode..." style="width:100%; margin-bottom:20px;">
-                <div id="productList"></div>
+                <div id="productList">
+                    <div class="empty-state">Type to search products...</div>
+                </div>
             </div>
             <div class="card">
                 <h3>🛒 Shopping Cart</h3>
-                <div id="cartList"></div>
+                <div id="cartList">
+                    <div class="empty-state">Cart is empty</div>
+                </div>
                 <div class="flex-between" style="margin-top:20px;">
                     <strong style="font-size:18px;">Total:</strong>
                     <strong style="font-size:24px; color:#1e4a76;" id="cartTotal">${formatMoney(0)}</strong>
                 </div>
-                <button class="btn-success" onclick="completeSale()" style="width:100%; margin-top:20px; padding:12px;">✅ Complete Sale</button>
+                <button class="btn-success" onclick="window.completeSale()" style="width:100%; margin-top:20px; padding:12px;">✅ Complete Sale</button>
             </div>
         `;
         
@@ -854,19 +900,19 @@
             let total = 0;
             const cartDiv = document.getElementById('cartList');
             if (currentCart.length === 0) {
-                cartDiv.innerHTML = '<p style="text-align:center; color:#666;">Cart is empty</p>';
+                cartDiv.innerHTML = '<div class="empty-state">Cart is empty</div>';
             } else {
                 cartDiv.innerHTML = currentCart.map((item, idx) => {
                     total += item.price * item.qty;
                     return `
                         <div class="cart-item">
                             <div>
-                                <strong>${item.name}</strong><br>
+                                <strong>${escapeHtml(item.name)}</strong><br>
                                 ${formatMoney(item.price)} x ${item.qty}
                             </div>
                             <div>
                                 <strong>${formatMoney(item.price * item.qty)}</strong>
-                                <button onclick="removeFromCart(${idx})" style="background:#dc2626; border:none; padding:5px 10px; border-radius:6px; color:white; margin-left:10px;">Remove</button>
+                                <button onclick="window.removeFromCart(${idx})" style="background:#dc2626; border:none; padding:5px 10px; border-radius:6px; color:white; margin-left:10px;">Remove</button>
                             </div>
                         </div>
                     `;
@@ -877,26 +923,32 @@
         
         function searchProducts() {
             const term = document.getElementById('posSearch').value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(term) || (p.barcode && p.barcode.includes(term)));
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(term) || 
+                (p.barcode && p.barcode.toLowerCase().includes(term))
+            );
             const productDiv = document.getElementById('productList');
             if (filtered.length === 0) {
-                productDiv.innerHTML = '<p style="text-align:center; color:#666;">No products found</p>';
+                productDiv.innerHTML = '<div class="empty-state">No products found</div>';
                 return;
             }
             productDiv.innerHTML = filtered.map(p => `
                 <div class="product-item">
                     <div>
-                        <strong>${p.name}</strong><br>
+                        <strong>${escapeHtml(p.name)}</strong><br>
                         ${formatMoney(p.price)} | Stock: ${p.quantity}
                     </div>
-                    <button onclick="addToCart(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, ${p.quantity})" style="background:#10b981; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;">+ Add to Cart</button>
+                    <button onclick="window.addToCart(${p.id}, '${escapeHtml(p.name).replace(/'/g, "\\'")}', ${p.price}, ${p.quantity})" style="background:#10b981; border:none; padding:8px 16px; border-radius:40px; color:white; cursor:pointer;">+ Add to Cart</button>
                 </div>
             `).join('');
         }
         
-        window.updateCartDisplayPOS = updateCartDisplay;
-        document.getElementById('posSearch').oninput = searchProducts;
-        searchProducts();
+        window.updateCartDisplay = updateCartDisplay;
+        const posSearch = document.getElementById('posSearch');
+        if (posSearch) {
+            posSearch.oninput = searchProducts;
+            searchProducts();
+        }
         updateCartDisplay();
     }
     
@@ -904,16 +956,11 @@
     async function showReports() {
         const products = await getAllProducts();
         const sales = await getAllSales();
+        const saleItems = await getAllSaleItems();
+        
         const totalRevenue = sales.reduce((sum, s) => sum + (s.total || 0), 0);
         
         // Calculate best selling products
-        const saleItems = await new Promise((resolve) => {
-            const transaction = db.transaction(['sale_items'], 'readonly');
-            const request = transaction.objectStore('sale_items').getAll();
-            request.onsuccess = () => resolve(request.result || []);
-            request.onerror = () => resolve([]);
-        });
-        
         const productSales = {};
         for (const item of saleItems) {
             productSales[item.product_id] = (productSales[item.product_id] || 0) + item.quantity;
@@ -934,28 +981,33 @@
                     <div class="stat-number">${products.length}</div>
                     <div class="stat-label">Active Products</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-number">${saleItems.reduce((sum, i) => sum + i.quantity, 0)}</div>
+                    <div class="stat-label">Units Sold</div>
+                </div>
             </div>
             
             <div class="card">
                 <h3>🏆 Best Selling Products</h3>
-                ${bestSellers.map(([id, qty]) => {
+                ${bestSellers.length > 0 ? bestSellers.map(([id, qty]) => {
                     const product = products.find(p => p.id == id);
-                    return `<div class="flex-between" style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <span>${product ? product.name : 'Unknown'}</span>
-                        <strong>${qty} units sold</strong>
+                    return `<div class="flex-between" style="padding: 12px 0; border-bottom: 1px solid #eee;">
+                        <span><strong>${product ? product.name : 'Unknown'}</strong></span>
+                        <span>${qty} units sold</span>
+                        <span>${formatMoney((product ? product.price : 0) * qty)}</span>
                     </div>`;
-                }).join('') || '<p>No sales data yet</p>'}
+                }).join('') : '<div class="empty-state">No sales data yet. Make your first sale!</div>'}
             </div>
             
             <div class="card">
                 <h3>📅 Transaction History</h3>
-                ${sales.slice(-15).reverse().map(s => `
+                ${sales.length > 0 ? sales.slice(-15).reverse().map(s => `
                     <div class="flex-between" style="padding: 12px 0; border-bottom: 1px solid #eee;">
                         <span>Sale #${s.id}</span>
                         <strong>${formatMoney(s.total)}</strong>
-                        <span style="color:#666;">${new Date(s.date).toLocaleString()}</span>
+                        <span style="color:#666;">${s.date ? new Date(s.date).toLocaleString() : 'N/A'}</span>
                     </div>
-                `).join('') || '<p style="text-align:center;">No transactions yet</p>'}
+                `).join('') : '<div class="empty-state">No transactions yet</div>'}
             </div>
         `;
         
@@ -981,13 +1033,13 @@
                 return;
             }
         }
-        if (window.updateCartDisplayPOS) window.updateCartDisplayPOS();
+        if (window.updateCartDisplay) window.updateCartDisplay();
         showToast(`Added ${name}`);
     };
     
     window.removeFromCart = function(idx) {
         currentCart.splice(idx, 1);
-        if (window.updateCartDisplayPOS) window.updateCartDisplayPOS();
+        if (window.updateCartDisplay) window.updateCartDisplay();
     };
     
     window.completeSale = async function() {
@@ -1019,43 +1071,52 @@
         if (!product) return;
         
         const newName = prompt('Product name:', product.name);
-        if (newName) product.name = newName;
+        if (newName && newName.trim()) product.name = newName.trim();
         const newPrice = parseFloat(prompt('Price (ETB):', product.price));
         if (!isNaN(newPrice)) product.price = newPrice;
         const newQty = parseInt(prompt('Quantity:', product.quantity));
         if (!isNaN(newQty)) product.quantity = newQty;
+        const newBarcode = prompt('Barcode:', product.barcode || '');
+        product.barcode = newBarcode;
         
         await updateProduct(product);
-        showToast('Product updated');
+        showToast('Product updated successfully!');
         navigateToPage('products');
     };
     
     window.deleteProductById = async function(id) {
-        if (confirm('Delete this product?')) {
+        if (confirm('Delete this product permanently?')) {
             await deleteProduct(id);
-            showToast('Product deleted');
+            showToast('Product deleted!');
             navigateToPage('products');
         }
     };
     
     window.addNewProduct = async function() {
         const name = prompt('Product name:');
-        if (!name) return;
+        if (!name || !name.trim()) return;
         const price = parseFloat(prompt('Price (ETB):'));
-        if (isNaN(price)) return;
+        if (isNaN(price) || price <= 0) return;
         const qty = parseInt(prompt('Quantity:'));
-        if (isNaN(qty)) return;
+        if (isNaN(qty) || qty < 0) return;
         const barcode = prompt('Barcode (optional):') || '';
         
-        await addProduct({ name, price, quantity: qty, barcode, created_at: new Date().toISOString() });
-        showToast('Product added');
+        await addProduct({ 
+            name: name.trim(), 
+            price: price, 
+            quantity: qty, 
+            barcode: barcode, 
+            created_at: new Date().toISOString() 
+        });
+        showToast('Product added successfully!');
         navigateToPage('products');
     };
     
     // ============ NAVIGATION ============
     
     window.navigateToPage = async function(page) {
-        document.getElementById('pageTitle').innerHTML = page.charAt(0).toUpperCase() + page.slice(1);
+        const titles = { dashboard: 'Dashboard', products: 'Products', pos: 'POS', reports: 'Reports' };
+        document.getElementById('pageTitle').innerHTML = titles[page];
         
         if (page === 'dashboard') await showDashboard();
         else if (page === 'products') await showProducts();
@@ -1099,8 +1160,18 @@
         document.getElementById('loginPage').style.display = 'flex';
         document.getElementById('appScreen').classList.add('hidden');
         currentCart = [];
-        showToast('Logged out');
+        showToast('Logged out successfully');
     };
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
     
     // ============ INITIALIZE ============
     
@@ -1127,13 +1198,15 @@
         // Profile dropdown
         const profileBtn = document.getElementById('profileBtn');
         const logoutDropdown = document.getElementById('logoutDropdown');
-        profileBtn.onclick = function(e) {
-            e.stopPropagation();
-            logoutDropdown.classList.toggle('show');
-        };
-        document.addEventListener('click', function() {
-            logoutDropdown.classList.remove('show');
-        });
+        if (profileBtn) {
+            profileBtn.onclick = function(e) {
+                e.stopPropagation();
+                logoutDropdown.classList.toggle('show');
+            };
+            document.addEventListener('click', function() {
+                logoutDropdown.classList.remove('show');
+            });
+        }
         document.getElementById('logoutBtn').onclick = doLogout;
         
         // Mobile menu
